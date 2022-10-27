@@ -6,23 +6,23 @@ This is for a code review and refactoring exercise
 import math
 import random
 
-DEFAULT_LOW = 1
-DEFAULT_HIGH = 10
+Initial_Min = 1
+Initial_Max = 10
 
 
 def main():
-    """Menu-driven guessing game with option to change high limit."""
-    low = DEFAULT_LOW
-    high = DEFAULT_HIGH
+    """Menu-driven guessing game with option to change current_high limit."""
+    current_min = Initial_Min
+    current_high = Initial_Max
     number_of_games = 0
     print("Welcome to the guessing game")
     choice = input("(P)lay, (S)et limit, (H)igh scores, (Q)uit: ").upper()
     while choice != "Q":
         if choice == "P":
-            play(low, high)
+            play(current_min, current_high)
             number_of_games += 1
         elif choice == "S":
-            high = set_limit(low)
+            current_high = set_limit(current_min)
         elif choice == "H":
             high_scores()
         else:
@@ -31,7 +31,7 @@ def main():
     print(f"Thanks for playing ({number_of_games} times)!")
 
 
-def scoresave(number_of_guesses, low, high):
+def score_save(number_of_guesses, low, high):
     """Save score to scores.txt with range"""
     with open("scores.txt", "a") as outfile:
         print(f"{number_of_guesses}|{high - low + 1}", file=outfile)
@@ -50,16 +50,16 @@ def play(low, high):
             print("Lower")
         guess = int(input(f"Guess a number between {low} and {high}: "))
     print(f"You got it in {number_of_guesses} guesses.")
-    if good_score(number_of_guesses, high - low + 1) == True:
+    if good_score(number_of_guesses, high - low + 1) is True:
         print("Good guessing!")
     else:
         pass
     choice = input("Do you want to save your score? (y/N) ")
     if choice.upper() == "Y":
-        scoresave(number_of_guesses, low, high)
+        score_save(number_of_guesses, low, high)
         return
-    else:
-        print("Fine then.")
+
+
 
 def set_limit(low):
     """Set high limit to new value from user input."""
@@ -72,18 +72,20 @@ def set_limit(low):
 
 
 def get_valid_number(prompt):
+    """Error checks the prompt value, if it is a valid number"""
     is_valid = False
-    while is_valid == False:
+    while is_valid is False:
         try:
             number = int(input(prompt))
             is_valid = True
         except ValueError:
             print("Invalid number")
     return number
+
+
 def good_score(number_of_guesses, range_):
     if number_of_guesses <= math.ceil(math.log2(range_)):
         return True
-
 
 
 def high_scores():
@@ -96,5 +98,6 @@ def high_scores():
     for score in scores:
         marker = "!" if good_score(score[0], score[1]) else ""
         print(f"{score[0]} ({score[1]}) {marker}")
+
 
 main()
